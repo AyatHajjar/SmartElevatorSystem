@@ -2,32 +2,45 @@
 <html>
 <head>
     <title>Request Access</title>
+    <meta name="author" content="Ayat Hajjar">
+    <meta name="description" content="Request access form">
+    <meta name="robots" content="index, follow">
+    <meta http-equiv="pragma" content="no-cache">
 </head>
-
 <body>
 
-<h1>Request Access</h1>
-
-<form>
-
-<label>Name:</label>
-<input type="text">
-<br><br>
-
-<label>Email:</label>
-<input type="email">
-<br><br>
-
-<label>Reason:</label>
-<textarea></textarea>
-<br><br>
-
-<input type="submit" value="Send">
-
-</form>
 <h1>Request Access Page</h1>
 
+<form action="request.php" method="post">
+    <label>Full Name:</label>
+    <input type="text" name="fullname" required>
+    <br><br>
+
+    <label>Email:</label>
+    <input type="email" name="email" required>
+    <br><br>
+
+    <label>Reason for Access:</label>
+    <textarea name="reason" required></textarea>
+    <br><br>
+
+    <label>Role:</label>
+    <select name="role">
+        <option>Student</option>
+        <option>Instructor</option>
+        <option>Team Member</option>
+    </select>
+    <br><br>
+
+    <input type="submit" value="Submit Request">
+</form>
+
+<p><a href="login.html">Back to Login</a></p>
 <p><a href="index.html">Back to Home</a></p>
+
+<footer>
+    <p>Copyright © Ayat Hajjar</p>
+</footer>
 
 </body>
 </html>
