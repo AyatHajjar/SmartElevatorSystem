@@ -34,32 +34,32 @@
 </nav>
 
 <main>
-    <form id="requestForm">
+    <form id="requestForm" action="request_access.php" method="post"></form>
         <fieldset>
             <legend>Personal Information</legend>
 
             <label for="fullName">Full Name:</label>
-            <input type="text" id="fullName" name="fullName">
+     <input type="text" id="fullName" name="fullName" class="form-control">
 
             <label for="email">Email:</label>
-            <input type="email" id="email" name="email">
+            <input type="email" id="email" name="email" class="form-control">
 
             <label for="role">Role:</label>
-            <input type="text" id="role" name="role">
+            <<input type="text" id="role" name="role" class="form-control">
         </fieldset>
 
         <fieldset>
             <legend>Access Information</legend>
 
             <label for="reason">Reason for Access:</label>
-            <textarea id="reason" name="reason" maxlength="180"></textarea>
+            <textarea id="reason" name="reason" maxlength="180" class="form-control"></textarea>
 
             <p id="charCount">180 characters remaining</p>
             <p id="requestMessage"></p>
         </fieldset>
 
-        <button type="submit">Submit Request</button>
-        <button type="reset">Reset</button>
+        <button type="submit" class="btn btn-primary">Submit Request</button>
+<button type="reset" class="btn btn-secondary">Reset</button>
     </form>
 </main>
 

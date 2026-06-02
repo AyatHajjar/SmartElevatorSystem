@@ -30,20 +30,20 @@
 </nav>
 
 <main>
-    <form id="loginForm">
+    <form id="loginForm" action="login.php" method="post"></form>
         <p>
             <label for="username">Username:</label>
-            <input type="text" id="username" name="username">
+            <input type="text" id="username" name="username" class="form-control">
         </p>
 
         <p>
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password">
+            <input type="password" id="password" name="password" class="form-control">
         </p>
 
         <p id="loginMessage"></p>
 
-        <button type="submit">Login</button>
+<button type="submit" class="btn btn-primary">Login</button>
     </form>
 </main>
 
