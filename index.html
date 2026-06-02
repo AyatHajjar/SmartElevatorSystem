@@ -1,34 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Project VI Home Page</title>
+    <meta charset="UTF-8">
     <meta name="author" content="Ayat Hajjar">
     <meta name="description" content="Smart Elevator System Project VI home page">
     <meta name="robots" content="index, follow">
     <meta http-equiv="pragma" content="no-cache">
+
+    <title>Project VI Home Page</title>
+
+    <link rel="stylesheet" href="css/site_style.css">
+    <script src="js/main.js" defer></script>
 </head>
+
 <body>
+<div class="container">
 
-<h1>Project VI - Smart Elevator System</h1>
+<header>
+    <h1>Project VI - Smart Elevator System</h1>
+    <img src="images/logo.jpeg" width="200" alt="Team Logo">
+</header>
 
-<img src="images/logo.jpeg" width="200" alt="Team Logo">
+<nav>
+    <h2>Menu</h2>
+    <ul>
+        <li><a href="about.html">About Project VI</a></li>
+        <li><a href="Project_Plan.html">Project Plan</a></li>
+        <li><a href="logbook.html">Log Book</a></li>
+        <li><a href="login.html">Login</a></li>
+        <li><a href="Request Access.html">Request Access</a></li>
+        <li><a href="project_details.html">Project Details</a></li>
+    </ul>
+</nav>
 
-<h2>Menu</h2>
-<ul>
-    <li><a href="about.html">About Project VI</a></li>
-    <li><a href="Project_Plan.html">Project Plan</a></li>
-    <li><a href="logbook.html">Log Book</a></li>
-    <li><a href="login.html">Login</a></li>
-    <li><a href="Request Access.html">Request Access</a></li>
-</ul>
+<main>
+    <p>Welcome to our Project VI website for the Smart Elevator System.</p>
 
-<p>Welcome to our Project VI website for the Smart Elevator System.</p>
+    <p>Current Date and Time: <span id="dateTime"></span></p>
+</main>
 
 <footer>
-    <p>Copyright © Ayat Hajjar</p>
+    <p>Copyright © <span id="year"></span> Ayat Hajjar</p>
 </footer>
 
+</div>
 </body>
 </html>
-
-
