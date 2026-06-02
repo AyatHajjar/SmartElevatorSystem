@@ -5,27 +5,31 @@ form {
 
 fieldset {
     border: 2px solid #2a5d84;
+    border-radius: 10px;
     padding: 20px;
     margin-bottom: 20px;
-    background-color: #eef6ff;
+    background: #eef6ff;
 }
 
 legend {
     font-weight: bold;
-    color: #2a5d84;
+    color: #1f3b57;
+    padding: 0 10px;
 }
 
 label {
     display: inline-block;
     width: 160px;
-    margin-top: 10px;
+    margin-top: 12px;
     font-weight: bold;
 }
 
 input, textarea {
     width: 350px;
-    padding: 6px;
+    padding: 8px;
     margin-top: 10px;
+    border: 1px solid #777;
+    border-radius: 6px;
 }
 
 textarea {
@@ -33,9 +37,16 @@ textarea {
 }
 
 button {
-    padding: 10px 20px;
+    padding: 10px 22px;
     margin: 10px;
     font-weight: bold;
     border-radius: 8px;
+    border: 1px solid #333;
     cursor: pointer;
+    background: #1f3b57;
+    color: white;
+}
+
+button:hover {
+    background: #2a5d84;
 }

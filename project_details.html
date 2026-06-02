@@ -1,84 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="author" content="Ayat Hajjar">
-    <meta name="description" content="Project Details page for Smart Elevator System">
-    <meta name="robots" content="index, follow">
-    <meta http-equiv="pragma" content="no-cache">
+@import url("site_style.css");
 
-    <title>Project Details</title>
+figure {
+    width: 600px;
+    margin: 25px auto;
+    padding: 15px;
+    text-align: center;
+    border: 2px solid green;
+    border-radius: 25px;
+    background: #f9fbfd;
+}
 
-    <link rel="stylesheet" href="css/project_details_style.css">
-</head>
+figure img {
+    height: 300px;
+    border: 2px solid blue;
+    box-shadow: 10px 10px 5px gray;
+}
 
-<body>
-   
+.caption {
+    text-align: center;
+    font-style: italic;
+    font-size: 90%;
+    text-indent: 0;
+}
 
-   
-<div id="pageBox">
-
-<header>
-    <h1>Project Details</h1>
-</header>
-
-<nav>
-    <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html">About Project VI</a></li>
-        <li><a href="Project_Plan.html">Project Plan</a></li>
-        <li><a href="logbook.html">Log Book</a></li>
-        <li><a href="login.html">Login</a></li>
-        <li><a href="request_access.html">Request Access</a></li>
-    </ul>
-</nav>
-
-<main>
-    <h2>Smart Elevator System</h2>
-
-    <p>
-        The <strong><em>Smart Elevator System</em></strong> is a Project VI website created to organize
-        the main information about the elevator project. The website includes project information,
-        a project plan, log book pages, login access, request access, and project documentation.
-    </p>
-
-    <p>
-        The purpose of this project is to build a simple web-based system that presents the project
-        clearly and professionally. The team can use the website to show progress, responsibilities,
-        design information, and important project documents.
-    </p>
-
-    <figure>
-        <img src="images/fig1.jpg" alt="Project figure one">
-        <figcaption class="caption">Figure 1: Project system overview.</figcaption>
-    </figure>
-
-    <figure>
-        <img src="images/fig2.jpg" alt="Project figure two">
-        <figcaption class="caption">Figure 2: Project communication overview.</figcaption>
-    </figure>
-
-    <h2>Project Charter</h2>
-<
-    <p>
-        The <span class="important">Project Charter</span> explains the project scope, goals,
-        team roles, and responsibilities.
-    </p>
-
-    <p>
-        <a id="charterLink" href="documents/S6 Project Charter 2026.pdf">Open Project Charter PDF</a>
-    </p>
-</main>
-
-<footer>
-    <p>Copyright © <span id="year"></span> Ayat Hajjar</p>
-</footer>
-
-</div>
-
-<script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-</script>
-
-</body>
-</html>
+.important, #charterLink {
+    font-weight: bold;
+    font-style: italic;
+    text-decoration: underline;
+}
