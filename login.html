@@ -1,34 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login Page</title>
+    <meta charset="UTF-8">
     <meta name="author" content="Ayat Hajjar">
-    <meta name="description" content="Login page for restricted access">
+    <meta name="description" content="Login page">
     <meta name="robots" content="index, follow">
     <meta http-equiv="pragma" content="no-cache">
+
+    <title>Login</title>
+
+    <link rel="stylesheet" href="css/site_style.css">
+    <script src="js/login.js" defer></script>
 </head>
+
 <body>
+<div class="container">
 
-<h1>Login Page</h1>
+<header>
+    <h1>User Login</h1>
+</header>
 
-<form action="login.php" method="post">
-    <label>Username:</label>
-    <input type="text" name="username" required>
-    <br><br>
+<nav>
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Project VI</a></li>
+        <li><a href="project_details.html">Project Details</a></li>
+        <li><a href="request_access.html" class="requestButton">Request Access</a></li>
+    </ul>
+</nav>
 
-    <label>Password:</label>
-    <input type="password" name="password" required>
-    <br><br>
+<main>
+    <form id="loginForm">
+        <p>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username">
+        </p>
 
-    <input type="submit" value="Log In">
-</form>
+        <p>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password">
+        </p>
 
-<p><a href="Request Access.html">Request Access</a></p>
-<p><a href="index.html">Back to Home</a></p>
+        <p id="loginMessage"></p>
+
+        <button type="submit">Login</button>
+    </form>
+</main>
 
 <footer>
-    <p>Copyright © Ayat Hajjar</p>
+    Copyright © <span id="year"></span> Ayat Hajjar
 </footer>
 
+</div>
 </body>
 </html>
