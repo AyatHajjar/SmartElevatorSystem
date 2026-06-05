@@ -10,30 +10,34 @@
     
     <link rel="stylesheet" href="css/login.css">
   </head>
-  
-  <body>
-    <form action="php/login.php" method="post" id="login">
-      
-      <h1>Login</h1>
-        
-      <p> 
-        <span class="text_label">Username:</span> 
-        <input type="text" name="username" class="text_input" required />
-      </p>
-      
-      <p> 
-        <span class="text_label">Password:</span> 
-        <input type="password" name="password" class="text_input" required /> 
-      </p>
-        
-      <input type="submit" id="submit" value="Log In"><br>
-        
-      <p> Request Access Button <br>
+	
+	<body>
+		<form action="php/login.php" method="post">
+			<h1>Please log in</h1>
+			<div>
+				<label for="username" class="text_label">Username:</label>
+				<input id="username" type="text" class="text_input" name="username" />
+			</div>
+			<div>
+				<label for="password" class="text_label">Password:</label>
+				<input id="password" type="password" class="text_input" name="password" required /> 
+			</div>
+			<div><input type="submit" value="Log in" id="submit"/></div>
+			<div>
+				<p>Error Messages:</p>
+				<p id="feedback"></p><br>
+				<p id="feedbackP"></p>
+			</div>
+			
+			<a href="access.html">Request Access</a><br>
+			<!-- p> Request Access Button <br>
         <a href="access.html" class="request-access-btn">
           <span>Request Access</span>
         </a>
-      </p>
-    </form>
-    
-  </body>
+      </p -->
+      
+		</form>
+		<script src="js/eventListeners.js"></script>
+	</body>
 </html>
+
