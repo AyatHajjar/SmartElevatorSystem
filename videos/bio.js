@@ -1,6 +1,6 @@
 var today = new Date();
 var year = today.getFullYear();
-var birthdate = new Date('Feb 7, 2005 15:30:00');
+var birthdate = new Date('May 16, 2000 15:30:00');
 
 var age = today.getTime() - birthdate.getTime();
 age = Math.floor(age / 31556900000);
