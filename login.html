@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Ayat Hajjar">
+    <meta name="description" content="Login page">
+    <meta name="robots" content="index, follow">
+    <meta http-equiv="pragma" content="no-cache">
+
+    <title>Login</title>
+
+    <link rel="stylesheet" href="css/site_style.css">
+    <script src="js/login.js" defer></script>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+    <h1>User Login</h1>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Project VI</a></li>
+        <li><a href="project_details.html">Project Details</a></li>
+        <li><a href="Request Access.html" class="requestButton">Request Access</a></li>
+    </ul>
+</nav>
+
+<main>
+    <form id="loginForm" action="login.php" method="post">
+        <p>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" class="form-control">
+        </p>
+
+        <p>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" class="form-control">
+        </p>
+
+        <p id="loginMessage"></p>
+
+        <button type="submit" class="btn btn-primary">Login</button>
+        
+      <!-- MAKES A USABLE BUTTON PIC p> Request Access Button <br>
+        <a href="Request Access.html" class="btn btn-primary">
+          <span>Request Access</span>
+        </a>
+      </p -->
+      
+    </form>
+</main>
+
+<footer>
+    Copyright © <span id="year"></span> Ayat Hajjar
+</footer>
+
+</div>
+</body>
+</html>
