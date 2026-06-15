@@ -30,15 +30,16 @@
 </nav>
 
 <main>
-    <form id="loginForm" action="login.php" method="post">
+    <form action="php/login.php" method="post">
+    <form id="loginForm" action="php/login.php" method="post">
         <p>
             <label for="username">Username:</label>
-            <input type="text" id="username" name="username" class="form-control">
+            <input type="text" id="username" name="username" minlength="7" class="form-control">
         </p>
 
         <p>
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password" class="form-control">
+            <input type="password" id="password" name="password" minlength="7" class="form-control">
         </p>
 
         <p id="loginMessage"></p>
@@ -55,7 +56,7 @@
 </main>
 
 <footer>
-    Copyright © <span id="year"></span> Ayat Hajjar
+    Copyright © <span id="year"></span> Group 5
 </footer>
 
 </div>

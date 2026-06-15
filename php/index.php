@@ -12,6 +12,7 @@
 		return $new_floor;
 	}
 ?>
+
 <?php 
 	function get_currentFloor(): int {
 		try { $db = new PDO('mysql:host=127.0.0.1;dbname=elevator','ese','ese');}
@@ -44,9 +45,7 @@
 				Request floor # <input type="number" style="width:50px; height:40px" name="newfloor" max=3 min=1 required />
 				<input type="submit" value="Go"/>
 			</form>
-		</h2>
-		  
-		
+		</h2>	
 </html>
  
  
