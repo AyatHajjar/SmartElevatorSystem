@@ -32,6 +32,7 @@ document.getElementById("loginForm").addEventListener("submit", function (event)
         message.textContent = "Login information is valid.";
         message.style.color = "green";
     }
+    window.addEventListener('load', setup, false);
 });
 
 /*

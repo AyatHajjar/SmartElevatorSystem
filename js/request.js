@@ -61,15 +61,6 @@ function(event){
         return;
     }
 
-    if(reason.length > 180)
-    {
-        message.textContent =
-        "Reason must be 180 characters or less.";
-
-        message.style.color = "red";
-        return;
-    }
-
     message.textContent =
     "Request submitted successfully.";
 
