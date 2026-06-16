@@ -56,7 +56,49 @@
 		  
 		  <p>An additional requirement is that student groups will create a <span class="mkunderlined">common</span> CAN message specification to which all groups will adhere.  The intent is to ensure that any embedded system from one group can be removed and added to another group, with no required changes in embedded software.  
 		  </p>
-		  
+		  <h2>CAN Communication Protocol</h2>
+
+<p>
+To ensure compatibility between all elevator nodes, a common CAN communication
+protocol was developed and implemented. The protocol defines the CAN IDs,
+message structure, transmitter and receiver relationships, and data values
+used by the Supervisory Controller (SC), Elevator Controller (EC), Car
+Controller (CC), and Floor Controllers (F1, F2, and F3).
+</p>
+
+<figure>
+    <img src="../images/can_protocol_table.png" width="900" alt="CAN Protocol Layout">
+    <figcaption>
+        Figure 3: Common CAN protocol message layout showing CAN identifiers,
+        controller responsibilities, recipients, and data field assignments
+        used throughout the Smart Elevator System.
+    </figcaption>
+</figure>
+
+<p>
+The protocol assigns unique CAN IDs to each controller and defines the
+communication flow between elevator subsystems. This standardized approach
+allows all controllers to exchange information using a common message format,
+making the system modular and scalable.
+</p>
+
+<figure>
+    <img src="../images/Can_messagex_layout.png" width="900" alt="CAN Message Values">
+    <figcaption>
+        Figure 4: CAN message value reference table showing binary and
+        hexadecimal representations for elevator commands, floor requests,
+        controller status information, and elevator position updates.
+    </figcaption>
+</figure>
+
+<p>
+The CAN protocol was tested using STM32 controllers connected through the CAN
+network. Floor request messages, elevator status updates, and controller
+commands were successfully transmitted and received according to the protocol
+specification. Testing confirmed reliable communication between all elevator
+controllers and verified correct interpretation of both binary and hexadecimal
+message values.
+</p>
 		  <p>The minimal project (in <span class="mkbold">Phase 1</span>) is a CAN network consisting of the controller, the call stations, the distance sensor, and LCD/7 Segment display.  Extra credit projects will extend both the hardware design and the software capabilities to include additional functionality; however, these must be approved by the faculty team prior to embarking on extra credit work. Examples of possible extensions include a passenger on/off detection and counter system to enable the tracking of elevator utilization, or a security camera control system.
 		  </p>
 		  
@@ -80,6 +122,7 @@
 		  <p>In <span class="mkbold">Phase 3</span> the two modules (developed in phases 1 and 2) will be integrated to complete the system. This phase also encourages each student group to incorporate features that are not specifically stated in this charter document. This phase includes a final demonstration, oral presentation and report.
 		  Students will work in groups of three or four students (if applicable).</p>
 		  
+
 		  <h2>Milestones</h2>
 		  <p>This is a summary of the milestone dates for each phase. A complete breakdown of the detailed tasks in each phase may be found in the <a href="documents/S6 Project Charter 2026.pdf">Project Charter</a></p>
 		  <table>
