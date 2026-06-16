@@ -112,6 +112,53 @@ System project.
         Figure 3: Smart Elevator System GitHub repository and website deployment.
     </figcaption>
 </figure>
+<h2>Week 4</h2>
+
+<p>
+During Week 4, I continued working on the Smart Elevator System project.
+The main focus was CAN communication, Raspberry Pi web interface testing,
+and verifying that the elevator responds to remote floor requests.
+</p>
+
+<ul>
+    <li>Configured and tested CAN communication between STM32 controllers.</li>
+    <li>Verified CAN transmit and receive messages using Tera Term.</li>
+    <li>Tested Floor 1, Floor 2, and Floor 3 request messages.</li>
+    <li>Confirmed CAN IDs and data values matched the shared CAN protocol.</li>
+    <li>Connected to the Raspberry Pi remotely using RealVNC Viewer.</li>
+    <li>Tested the elevator web interface from the Raspberry Pi browser.</li>
+    <li>Verified that the elevator moved to the requested floor.</li>
+    <li>Updated the project website and log book documentation.</li>
+</ul>
+
+<h3>Week 4 Evidence</h3>
+
+<figure>
+    <img src="images/REAL IDs.png"
+         width="700"
+         alt="CAN Communication Test">
+
+    <figcaption>
+        Figure 4: CAN communication test showing successful floor request messages
+        and received CAN data in Tera Term.
+    </figcaption>
+</figure>
+
+<figure>
+    <img src="images/inside ele.png"
+         width="700"
+         alt="Raspberry Pi Elevator Web Interface">
+
+    <figcaption>
+        Figure 5: Raspberry Pi web interface used to request elevator floors remotely.
+    </figcaption>
+</figure>
+
+<p>
+Result: The CAN communication was working successfully. The STM32 controller
+received floor request messages, and the Raspberry Pi web interface was able
+to communicate with the elevator system.
+</p>
 
 <p><a href="#top">Back to Top</a></p>
 
