@@ -1,39 +1,10 @@
-/* Unused but fixed syntax errors */
-.text_label {
-  float: left;
-  width: 100px;
-  text-align: right;
-  padding: 0px 10px 0px 0px;
-}
-
-.text_input {
-  width: 150px;
-  text-align: left;
-  padding: 0px 0px 0px 10px;
-}
-
-div { 
-  padding: 10px 0px 10px 0px;
-  width: 274px;
-}
-
-#submit { 
-  float: right; 
-}
-
-#login {
-  width: 300px;        /* Restricts the form from stretching forever */
-  margin: 50px auto;   /* Centers the entire form on the screen */
-  padding: 20px;
-  border: 1px solid #ccc; /* Optional: gives it a nice box boundary */
-}
-
 /* The Button & Rollover Effect */
 .request-access-btn {
   display: inline-block;
-  width: 300px;  /* Set to the exact width of your image */
-  height: 200px;  /* Set to the exact height of your image */
-  background-image: url('../images/link.jpg'); /* Adjusted path assuming images folder is next to css folder */
+  position: relative; /* Added to securely contain the hidden text span */
+  width: 150px;  
+  height: 50px;  
+  background-image: url('../images/link.png'); 
   background-size: cover;
   background-repeat: no-repeat;
   transition: background-image 0.2s ease-in-out; 
@@ -41,11 +12,11 @@ div {
 
 /* The Rollover Effect */
 .request-access-btn:hover {
-  background-image: url('../images/hover.jpeg'); 
+  background-image: url('../images/hover.png'); 
 }
 
 .request-access-btn:active {
-  background-image: url('../images/team.jpeg'); /* 3. Active State */
+  background-image: url('../images/active.png'); 
 }
 
 /* Hides the text visually, but keeps it accessible for screen readers */
