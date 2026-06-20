@@ -1,8 +1,6 @@
 <?php
-// Check if data was actually posted to this page
 $submitted = !empty($_POST);
 
-// Safe fallback variables to prevent "Undefined index" errors
 $username = $submitted ? htmlspecialchars($_POST['username']) : 'Not provided';
 $password = $submitted ? htmlspecialchars($_POST['password']) : 'Not provided';
 ?>
