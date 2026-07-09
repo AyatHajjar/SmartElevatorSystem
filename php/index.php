@@ -1,21 +1,20 @@
 <?php
-    function update_elevatorNetwork(int $node_ID, int $new_floor = 1, string $status = 'Normal'): int {
+    function update_elevatorNetwork(int $node_ID, int $new_floor = 1): int {
         try {
             $db1 = new PDO('mysql:host=127.0.0.1;dbname=elevator', 'ese', 'ese');
             $db1->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             $query = 'UPDATE elevatorNetwork 
-                    SET currentFloor = :floor, status = :status
+                    SET currentFloor = :floor
                     WHERE nodeID = :id';
             $statement = $db1->prepare($query);
-            $statement->bindValue('floor', $new_floor, PDO::PARAM_INT);
-            $statement->bindValue('status', $status, PDO::PARAM_STR);
-            $statement->bindValue('id', $node_ID, PDO::PARAM_INT);
+            $statement->bindValue(':floor', $new_floor, PDO::PARAM_INT);
+            $statement->bindValue(':id', $node_ID, PDO::PARAM_INT);
             $statement->execute();    
             
             return $new_floor;
         } catch (PDOException $e) {
-            return $new_floor; 
+            die("Database Error: " . $e->getMessage());
         }
     }
 
@@ -30,7 +29,7 @@
             $current_floor = $default_floor;
             
             foreach ($rows as $row) {
-                $current_floor = $row[0];
+                $current_floor = $row[0]; 
             }
             return $current_floor;
 
@@ -44,14 +43,12 @@
     $curFlr = get_currentFloor();
 
     if (isset($_POST['newfloor'])) {
-        update_elevatorNetwork(1, (int)$_POST['newfloor'], 'Normal'); 
+        update_elevatorNetwork(1, (int)$_POST['newfloor']); 
         header('Location: index.php');
         exit;
     } 
 
     if (isset($_POST['action'])) {
-        $action = $_POST['action']; 
-        update_elevatorNetwork(1, $curFlr, $action); 
         header('Location: index.php');
         exit;
     }
@@ -135,7 +132,7 @@
             }
             .btn-danger { 
                 background-color: #dc3545; 
-                width: calc(100% - 10px); /* Makes the alarm button stretch full width */
+                width: calc(100% - 10px); 
                 margin-top: 10px;
             }
             .btn-danger:hover {
@@ -168,8 +165,8 @@
 
             <h2>Door Controls</h2>
             <form action="index.php" method="POST">
-                <button type="submit" name="action" value="Open" class="btn"><|> Open</button>
-                <button type="submit" name="action" value="Closed" class="btn">>|< Close</button>
+                <button type="submit" name="action" value="Open" class="btn">&lt;|&gt; Open</button>
+                <button type="submit" name="action" value="Closed" class="btn">&gt;|&lt; Close</button>
                 <button type="submit" name="action" value="Alarm" class="btn btn-danger">ALARM</button>
             </form>
         </div>
