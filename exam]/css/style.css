@@ -1,0 +1,364 @@
+/* Style the whole page */
+body
+{
+    font-family: Arial, sans-serif; /* Font type */
+    background-color: white; /* Page background */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+}
+
+/* Main container */
+.container /* . mean class and # id  .menu all parts in menu * div p mean all para inside dive*/
+{
+    width: 80%; /* Page width */
+    max-width: 900px; /* Maximum width */
+    margin: 30px auto; /* Center the box */
+    padding: 20px; /* Space inside box */
+    background-color: white; /* Box background */
+    border: 2px solid #333; /* Border around box */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 5px 5px 10px gray; /* Shadow */
+}
+legend{
+    color: white;
+    background-color: black;
+}
+/* Headings */
+h1
+{
+    text-align:left;
+     color: white;
+     background-color: black;
+}
+
+/* Paragraphs */
+.p
+{
+    font-size: 16px; /* Text size */
+    line-height: 24px; /* Space between lines */
+}
+
+/* Navigation */
+nav
+{
+    text-align: right; /* Center links */
+    margin-bottom: 20px; /* Space below nav */
+    line-height: 10px;
+}
+
+nav a
+{
+    color: white; /* Link text color */
+    background-color:black; /* Link background */
+    padding: 10px 15px; /* Space inside link */
+    text-decoration: none; /* Remove underline */
+    margin: 5px; /* Space between links */
+    border-radius: 5px; /* Rounded links */
+}
+
+nav a:hover
+{
+    background-color: black; /* Change color on hover  when put the mouse in and befor pressing after pressing chabg the color*/
+}
+
+/* Form sections */
+section
+{
+    margin-top: 25px; /* Space above section */
+    padding: 15px; /* Space inside section */
+    border: 1px solid #ccc; /* Light border */
+}
+
+/* Labels */
+label
+{
+    display: block; /* Put label on its own line * block under eachother anf inline beside other*/
+    margin-top: 10px; /* Space above label */
+    font-weight: bold; /* Bold text */
+}
+
+/* Inputs and textarea */
+input, textarea
+{
+    width: 100%; /* Full width */
+    padding: 10px; /* Space inside input */
+    margin-top: 5px; /* Space above input */
+    border: 1px solid #999; /* Input border */
+    border-radius: 5px; /* Rounded input */
+    box-sizing: border-box; /* Keep width inside box */
+}
+
+/* Textarea */
+textarea
+{
+    height: 100px; /* Textarea height */
+}
+
+/* Focus effect */
+input:focus, textarea:focus
+{
+    background-color: #e6f2ff; /* Background when selected */
+    border-color: #0066cc; /* Border when selected */
+}
+
+/* Buttons */
+button
+{
+    margin-top: 15px; /* Space above button */
+    padding: 10px 20px; /* Button size */
+    background-color:pink; /* Button color */
+    color: black; /* Text color */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded button */
+    cursor: pointer; /* Mouse pointer */
+}
+
+/* Button hover */
+button:hover
+{
+    background-color: #0066cc; /* Change color on hover */
+}
+
+/* Error or result messages */
+#loginMessage, #signupMessage, #charCount
+{
+    color: red; /* Message color */
+    font-weight: bold; /* Bold message */
+}
+/*/* ============================= */
+/* Placeholder text color */
+/* ============================= */
+::placeholder
+{
+    color: gray; /* Placeholder text */
+}
+
+
+/* ============================= */
+/* Button active effect */
+/* ============================= */
+button:active
+{
+    color: orange; /* While clicking */
+}
+
+
+/* ============================= */
+/* Link pseudo classes */
+/* ============================= */
+
+/* Unvisited link */
+a:link
+{
+    color: blue;
+}
+
+/* Visited link */
+a:visited
+{
+    color: purple;
+}
+
+/* Mouse over link */
+a:hover
+{
+    font-weight: bold;
+}
+
+/* While clicking link */
+a:active
+{
+    color: orange;
+}
+
+
+/* ============================= */
+/* Display inline (menu links) */
+/* ============================= */
+li
+{
+    display: inline; /* Horizontal list */
+}
+
+
+/* ============================= */
+/* Paragraph formatting */
+/* ============================= */
+p
+{
+    line-height: 20px;   /* Line spacing */
+    text-indent: 15px;   /* First line indent */
+}
+
+
+/* ============================= */
+/* Heading formatting */
+/* ============================= */
+h1
+{
+    font-size: 160%;
+    text-align: center;
+}
+
+h2
+{
+    font-size: 125%;
+    text-align: center;
+}
+
+
+/* ============================= */
+/* Label formatting */
+/* ============================= */
+label
+{
+    font-weight: bold;
+}
+
+
+/* ============================= */
+/* Italic text example */
+/* ============================= */
+.note
+{
+    font-style: italic;
+}
+
+
+
+/*=========================================*/
+/* /* ============================================================
+   EXTRA CSS FROM LECTURE SLIDES
+   (Not applied - Remove comment if needed)
+===============================================================
+
+/* ---------- Placeholder ----------
+
+::placeholder
+{
+    color: gray;
+}
+
+*/
+
+/* ---------- Button Active ----------
+
+button:active
+{
+    color: orange;
+}
+
+*/
+
+/* ---------- Link Pseudo Classes ----------
+
+a:link
+{
+    color: blue;
+}
+
+a:visited
+{
+    color: purple;
+}
+
+a:hover
+{
+    font-weight: bold;
+}
+
+a:active
+{
+    color: orange;
+}
+
+*/
+
+/* ---------- Horizontal Menu ----------
+
+li
+{
+    display: inline;
+}
+
+*/
+
+/* ---------- Paragraph ----------
+
+p
+{
+    line-height: 20px;
+    text-indent: 15px;
+}
+
+*/
+
+/* ---------- Headings ----------
+
+h1
+{
+    font-size:160%;
+    text-align:center;
+}
+
+h2
+{
+    font-size:125%;
+    text-align:center;
+}
+
+*/
+
+/* ---------- Labels ----------
+
+label
+{
+    font-weight:bold;
+}
+
+*/
+
+/* ---------- Italic Example ----------
+
+.note
+{
+    font-style:italic;
+}
+
+*/
+
+/* ============================================================
+   PROJECT DETAILS PAGE (Exercise Q14-Q16)
+   Use only in project_details_style.css
+===============================================================
+
+.container
+{
+    width:950px;
+    margin:auto;
+    padding:10px;
+    border:2px solid black;
+}
+
+figure
+{
+    text-align:center;
+    border:2px solid black;
+    border-radius:25px;
+    padding:10px;
+}
+
+img
+{
+    border:2px solid black;
+    box-shadow:10px 10px 5px gray;
+}
+
+figcaption
+{
+    text-align:center;
+    font-style:italic;
+    font-size:90%;
+}
+
+*/

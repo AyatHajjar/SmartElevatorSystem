@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsive page -->
+    <title> Signup</title>
+
+    <link rel="stylesheet" href="/..css/style.css"> 
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>project website
+
+    <nav>
+        <a href="#login">Login</a>
+        <a href="#signup">Signup</a>
+    </nav></h1>
+
+    <section id="Sign up">
+
+
+        <form id="loginForm" action="auth.php" method="post">
+        <fieldset>
+        <legend>Sign up</legend>
+            <input type="hidden" name="action" value="login">
+
+            <label>Username:</label>
+            <input type="text" id="loginUsername" name="username" placeholder="Enter username">
+
+            <label>Password:</label>
+            <input type="password" id="loginPassword" name="password" placeholder="Enter password">
+
+            <button type="submit">Add me</button>
+            </fieldset>
+        </form>
+
+        <p id="loginMessage"></p> 
+        <p id="error"></p>
+    </section>        
+</div>
+
+<script src="main.js"></script> 
+
+</body>
+</html>
