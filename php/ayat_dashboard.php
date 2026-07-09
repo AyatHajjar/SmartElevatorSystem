@@ -125,6 +125,26 @@ if ($status["elevator_status"] === "Moving") {
         <p class="system-label">Project VI • Smart Elevator System</p>
         <h1>Elevator Control Dashboard</h1>
     </header>
+<section class="shaft">
+    <div class="shaft-row <?php echo ($status["current_floor"] == 3) ? "active-floor" : ""; ?>">
+        <span>Floor 3</span>
+        <div class="elevator-car"><?php echo ($status["current_floor"] == 3) ? "🛗" : ""; ?></div>
+    </div>
+
+    <div class="shaft-row <?php echo ($status["current_floor"] == 2) ? "active-floor" : ""; ?>">
+        <span>Floor 2</span>
+        <div class="elevator-car"><?php echo ($status["current_floor"] == 2) ? "🛗" : ""; ?></div>
+    </div>
+
+    <div class="shaft-row <?php echo ($status["current_floor"] == 1) ? "active-floor" : ""; ?>">
+        <span>Floor 1</span>
+        <div class="elevator-car"><?php echo ($status["current_floor"] == 1) ? "🛗" : ""; ?></div>
+    </div>
+</section>
+
+
+
+
 
     <section class="floor-display">
         <span>Current Floor</span>
