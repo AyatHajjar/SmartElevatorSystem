@@ -58,93 +58,9 @@
 <html>
     <head>
         <title>ESE Project VI Elevator</title>
-        <style>
-            body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                background-color: #f0f2f5;
-                margin: 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                min-height: 100vh;
-            }
-            .elevator-panel {
-                background-color: #ffffff;
-                padding: 30px;
-                border-radius: 12px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-                width: 100%;
-                max-width: 340px;
-                text-align: center;
-                box-sizing: border-box;
-            }
-
-            h1 {
-                font-size: 1.4rem;
-                color: #333;
-                margin-top: 0;
-                margin-bottom: 20px;
-                border-bottom: 2px solid #007bff;
-                padding-bottom: 10px;
-            }
-            h2 {
-                font-size: 1.1rem;
-                color: #555;
-                margin: 15px 0;
-                font-weight: 600;
-            }
-
-            .floor-display {
-                background-color: lightgreen;
-                color: black;
-                font-family: 'Courier New', Courier, monospace;
-                padding: 10px;
-                border-radius: 6px;
-                font-size: 1.3rem;
-                margin-bottom: 20px;
-                box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
-            }
-
-            input[type="number"] {
-                width: 60px;
-                height: 38px;
-                font-size: 1rem;
-                text-align: center;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                margin-right: 5px;
-            }
-
-            .btn { 
-                height: 40px; 
-                min-width: 80px; 
-                margin: 5px;  
-                border: none;
-                border-radius: 4px;
-                background-color: #007bff;
-                color: white;
-                font-weight: bold;
-                cursor: pointer;
-                transition: background 0.2s;
-            }
-            .btn:hover {
-                background-color: #0056b3;
-            }
-            .btn-danger { 
-                background-color: #dc3545; 
-                width: calc(100% - 10px); 
-                margin-top: 10px;
-            }
-            .btn-danger:hover {
-                background-color: #bd2130;
-            }
-
-            hr {
-                border: 0;
-                border-top: 1px solid #eee;
-                margin: 20px 0;
-            }
-        </style>
+        
+        <link rel="stylesheet" href="../css/elevator.css">
+        
     </head>
     <body>
 
