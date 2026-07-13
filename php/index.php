@@ -67,12 +67,24 @@
         <div class="elevator-panel">
             <h1>Elevator Control</h1> 
             
+            <h2>Current Floor</h2>
             <div class="floor-display">
                 Floor: <?php echo $curFlr; ?>
             </div>        
             
+            <hr />
+            
+            <h2>Floor Control</h2>
+            <form action="index.php" method="POST" class="floor-buttons">
+                <button type="submit" name="newfloor" value="1" class="btn <?php echo ($curFlr == 1) ? 'active' : ''; ?>">Floor 1</button>
+                <button type="submit" name="newfloor" value="2" class="btn <?php echo ($curFlr == 2) ? 'active' : ''; ?>">Floor 2</button>
+                <button type="submit" name="newfloor" value="3" class="btn <?php echo ($curFlr == 3) ? 'active' : ''; ?>">Floor 3</button>
+            </form>
+            
+            <hr />
+            
             <form action="index.php" method="POST">
-                <h2>Go to Floor</h2>
+                <h2>Car Control</h2>
                 <input type="number" name="newfloor" max="3" min="1" required value="<?php echo $curFlr; ?>" />
                 <input type="submit" value="Go" class="btn"/>
             </form>
