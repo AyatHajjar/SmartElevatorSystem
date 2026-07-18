@@ -231,6 +231,63 @@ ted all database functions locally using Apache, PHP and MySQL.</li>
 </div>
 
 
+
+<section>
+    <h2>Week 9 Logbook</h2>
+
+    <h3>Work Completed</h3>
+
+    <p>
+        During Week 9, I continued developing my Elevator Control Dashboard for
+        Phase 2 of the Smart Elevator System project. The main objective was to
+        improve the software functionality by adding new features that interact
+        directly with the MySQL database and provide a better user experience.
+    </p>
+
+    <ul>
+        <li>Implemented recorded MP3 floor announcements for Floor 1, Floor 2, and Floor 3.</li>
+        <li>Configured the dashboard to play the correct floor announcement after each floor request.</li>
+        <li>Implemented Sabbath Mode to automatically cycle between all three floors.</li>
+        <li>Disabled manual floor requests while Sabbath Mode is active.</li>
+        <li>Stored automatic Sabbath Mode events inside the elevator activity log.</li>
+        <li>Implemented Maintenance Lock-out mode for authorized maintenance operations.</li>
+        <li>Disabled floor controls and door controls while Maintenance Lock-out is enabled.</li>
+        <li>Kept the Emergency Alarm available during Maintenance Lock-out.</li>
+        <li>Updated the Recent Activity log and Diagnostic Report using data stored in the MySQL database.</li>
+        <li>Tested all new Phase 2 software features locally using Apache, PHP, and MySQL.</li>
+    </ul>
+
+    <h3>Testing Performed</h3>
+
+    <ul>
+        <li>Verified floor announcements for all three floors.</li>
+        <li>Verified automatic floor cycling during Sabbath Mode.</li>
+        <li>Verified that manual floor requests are ignored while Sabbath Mode is active.</li>
+        <li>Verified that Maintenance Lock-out disables all floor and door controls.</li>
+        <li>Verified that Emergency Alarm remains operational during Maintenance Lock-out.</li>
+        <li>Verified that every operation is recorded correctly in the activity log and displayed in the Diagnostic Report.</li>
+    </ul>
+
+    <h3>Week 9 Evidence</h3>
+
+    <figure>
+        <img src="../images/elevator_ayat.png" width="700" alt="Phase 2 Dashboard">
+        <figcaption>
+            Figure 11: Final Elevator Dashboard showing Phase 2 software features.
+        </figcaption>
+    </figure>
+
+    
+    <figure>
+        <video width="700" controls>
+            <source src="../videos/phase2demo elevatot_ayat.webm" type="video/webm">
+            Your browser does not support the video tag.
+        
+
+</section>
+
+
+
 <footer class="row">    
         <div class="col-12">
           <h6>Return to Top of Page</h6>
