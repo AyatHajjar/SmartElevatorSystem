@@ -1,0 +1,52 @@
+form {
+    width: 650px;
+    margin: auto;
+}
+
+fieldset {
+    border: 2px solid #2a5d84;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background: #eef6ff;
+}
+
+legend {
+    font-weight: bold;
+    color: #1f3b57;
+    padding: 0px;
+}
+
+label {
+    display: inline-block;
+    width: 160px;
+    margin-top: 12px;
+    font-weight: bold;
+}
+
+input, textarea {
+    width: 350px;
+    padding: 8px;
+    margin-top: 10px;
+    border: 1px solid #777;
+    border-radius: 6px;
+}
+
+textarea {
+    height: 100px;
+}
+
+button {
+    padding: 10px 22px;
+    margin: 10px;
+    font-weight: bold;
+    border-radius: 8px;
+    border: 1px solid #333;
+    cursor: pointer;
+    background: #1f3b57;
+    color: white;
+}
+
+button:hover {
+    background: #2a5d84;
+}
