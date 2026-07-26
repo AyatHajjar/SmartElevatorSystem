@@ -152,10 +152,6 @@
 </ul>
 
 
-
-
-
-
 <section>
     <h2>Week 7 Logbook</h2>
 
@@ -285,7 +281,64 @@
         
 
 </section>
+<section>
+<h2> Week 11 Logbook</h2>
+<h3>  Work Completed</h3>
+<p>Implemented and tested a FIFO queue for the Smart Elevator System using the Raspberry Pi as the Server Controller. The queue was created using `std::queue<int>`, allowing multiple floor requests to be stored and processed in the same order they were received.
 
+Each floor request is added to the back of the queue using `push()`. The request at the front is selected using `front()` and removed using `pop()` only after the CAN command has been transmitted successfully. The system uses `elevatorBusy` to prevent a second destination command from being sent while the elevator is already moving. The current destination is stored in `currentRequest`.
+
+The Raspberry Pi waits for arrival confirmation from the Elevator Controller before processing the next queued request. The Elevator Controller uses CAN ID `0x101` with the following status values:
+
+* `0x04` — Elevator moving
+* `0x05` — Arrived at Floor 1
+* `0x06` — Arrived at Floor 2
+* `0x07` — Arrived at Floor 3
+
+The CAN receive function was updated to accept messages from CAN ID `0x101`. When the received arrival floor matches `currentRequest`, the active request is marked complete, `elevatorBusy` is cleared, and the next request is sent automatically.
+
+The floor-controller CAN IDs are:
+
+* `0x201` — Floor 1 Controller
+* `0x202` — Floor 2 Controller
+* `0x203` — Floor 3 Controller
+
+The Floor 1 controller buttons were programmed with separate CAN data values:
+
+* `PB12`, Data `0x01` — Floor 1 request
+* `PB14`, Data `0x02` — Software door open
+* `PB15`, Data `0x03` — Software door close
+
+The software door buttons display Open and Close messages because the elevator model does not include a physical door. Door commands are separate from the floor-request queue and do not represent destination requests.
+
+The system was tested by pressing two floor-request buttons close together while the elevator was still processing the first request. One successful test used Floor 3 followed by Floor 2. The output confirmed the sequence:
+
+```text
+Floor 3 added to queue
+Moving to Floor 3
+Floor 2 added to queue
+Elevator arrived at Floor 3
+Moving to Floor 2
+Elevator arrived at Floor 2
+```
+
+Another successful test used Floor 2 followed by Floor 1. The system completed Floor 2 first, received the arrival confirmation, and then moved to Floor 1.
+
+CAN communication was verified using the Raspberry Pi terminal and Tera Term. The results confirmed that the queue follows FIFO behavior: the first request received is completed before the next request is processed.
+</p>
+
+
+<figure>
+    <img src="../images/floor 3 and floor 2 queuing.png" width="700">>
+        <figcaption>
+            Figure 12: floor 3 and floor 2 are in queuning.
+        </figcaption>
+</figure>
+<img src="../images/floor 2 and floor 1 queuning.png" width="700">
+        <figcaption>
+            Figure 13: Floor 2 and floor 1 are in queuning.
+        </figcaption>
+</section>
 
 
 <footer class="row">    
