@@ -1,8 +1,3 @@
-<!-- use this to give json perms
-//type whoami and replace kaiden with that
-//sudo chown -R kaiden:www-data /var/www/html/web/json/ 
-//also use crtl shft R if pages dont update -->
-
 <?php
     session_start();
     
