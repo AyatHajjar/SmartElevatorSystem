@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Project VI - Log Book</title>
+    <title>Log Book - Ayat</title>
     <meta name="author" content="Ayat Hajjar">
     <meta name="description" content="Weekly log book for Project VI">
     <meta name="robots" content="index, follow">
@@ -340,6 +340,107 @@ CAN communication was verified using the Raspberry Pi terminal and Tera Term. Th
             Figure 13: Floor 2 and floor 1 are in queuning.
         </figcaption>
 </section>
+<section class="logbook-entry">
+    <h2>Phase 3 Research – CAN/LAN Communication and Database Logging</h2>
+
+    <p>
+        This week, I reviewed the existing Raspberry Pi elevator program to
+        understand how CAN communication is connected to the website and the
+        database.
+    </p>
+
+    <p>
+        The current <code>main.cpp</code> program already performs the main
+        communication tasks. It receives CAN messages using
+        <code>pcanRxOne()</code>, sends CAN commands using
+        <code>pcanTx()</code>, reads website floor requests using
+        <code>db_getFloorNum()</code>, and updates the database using
+        <code>db_setFloorNum()</code>.
+    </p>
+
+    <p>
+        The program also uses a queue to store requests from the website,
+        the car controller, and the floor controllers. Requests are processed
+        one at a time when the elevator is available.
+    </p>
+
+    <h3>Research Findings</h3>
+
+    <ul>
+        <li>
+            Received CAN messages should be recorded after
+            <code>pcanRxOne()</code> successfully receives a message.
+        </li>
+
+        <li>
+            Transmitted CAN messages should be recorded after
+            <code>pcanTx()</code> successfully sends a command.
+        </li>
+
+        <li>
+            Each database record should include the CAN ID, CAN data,
+            message direction, controller name, event description,
+            floor number, and timestamp.
+        </li>
+
+        <li>
+            A new table named <code>CAN_logs</code> will be used to store
+            the complete history of real CAN traffic.
+        </li>
+
+        <li>
+            The existing <code>CAN_subNetwork</code> table can be used to
+            show the most recent status of each CAN controller.
+        </li>
+    </ul>
+
+    <h3>Planned Communication Flow</h3>
+
+    <pre>
+GUI / LAN → Database → Raspberry Pi → CAN → Elevator
+
+Elevator → CAN → Raspberry Pi → Database / GUI
+    </pre>
+
+    <h3>Files Identified for Modification</h3>
+
+    <ul>
+        <li><code>main.cpp</code></li>
+        <li><code>databaseFunctions.cpp</code></li>
+        <li><code>databaseFunctions.h</code></li>
+    </ul>
+
+    <h3>Planned Implementation</h3>
+
+    <p>
+        A new database function named
+        <code>db_logCanMessage()</code> will be added. This function will
+        save every successful CAN transmission and reception in the
+        <code>CAN_logs</code> table.
+    </p>
+
+    <p>
+        The system will then be compiled and tested using both GUI floor
+        requests and physical CAN button requests. The test will confirm
+        that the elevator moves correctly and that the real CAN messages
+        are automatically stored in the database.
+    </p>
+
+    <h3>Next Steps</h3>
+
+    <ol>
+        <li>Review the existing database connection functions.</li>
+        <li>Create the <code>CAN_logs</code> database table.</li>
+        <li>Add the <code>db_logCanMessage()</code> function.</li>
+        <li>Add RX logging after successful CAN reception.</li>
+        <li>Add TX logging after successful CAN transmission.</li>
+        <li>Compile and test the Raspberry Pi program.</li>
+        <li>Verify the saved messages in the database.</li>
+        <li>Upload the completed changes to GitHub.</li>
+    </ol>
+
+</section>
+
 
 
 <footer class="row">    
