@@ -1,0 +1,102 @@
+header, nav, main, section, article, aside, footer {
+    display: block;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Georgia, serif;
+    background: #eef2f7;
+    color: #222;
+}
+
+.container, #pageBox {
+    width: 950px;
+    margin: 25px auto;
+    padding: 25px;
+    background: white;
+    border: 2px solid black;
+    border-radius: 12px;
+    box-shadow: 0 0 15px gray;
+}
+
+header {
+    text-align: center;
+}
+
+h1 {
+    font-size: 160%;
+    color: #1f3b57;
+    text-align: center;
+    border-bottom: 3px solid #2a5d84;
+    padding-bottom: 10px;
+}
+
+h2 {
+    font-size: 125%;
+    color: #2a5d84;
+    margin-top: 25px;
+}
+
+p, li {
+    font-size: 100%;
+    line-height: 20px;
+    text-align: justify;
+}
+
+p {
+    text-indent: 15px;
+}
+
+nav {
+    background: #1f3b57;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+nav h2 {
+    color: white;
+    text-align: center;
+    margin: 0 0 10px 0;
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav li {
+    display: inline-block;
+}
+
+nav a {
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+nav a:hover {
+    color: gold;
+    text-decoration: underline;
+}
+
+img {
+    max-width: 100%;
+}
+
+figure {
+    text-align: center;
+}
+
+footer {
+    margin-top: 30px;
+    padding-top: 15px;
+    border-top: 1px solid #ccc;
+    font-size: 90%;
+    text-align: center;
+}
