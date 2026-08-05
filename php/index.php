@@ -4,33 +4,181 @@
     error_reporting(E_ALL);
 
     session_start();
-
-    // Include OOP structural classes from the 'oop' folder
-    require_once 'oop/DatabaseConnector.php';
-    require_once 'oop/ElevatorCar.php';
-    require_once 'oop/FloorNode.php';
-
+    
+    define('SABBATH_DWELL_MS', 5000); // time spent at each floor before advancing
+    define('MIN_FLOOR', 1);
+    define('MAX_FLOOR', 3);
     define('REQUIRE_LOGIN_FOR_MAINTENANCE', false); // set back to true before real use
 
-    // Initialize dependencies
-    $dbConnector = new DatabaseConnector();
-    $pdo = $dbConnector->connect();
-    
-    $elevator = new ElevatorCar($pdo, 1);
-    $floorNodeConfig = new FloorNode(1, 3, 5000);
+    function update_elevatorNetwork(int $node_ID, ?int $new_floor = null, ?int $requested_floor = null, ?string $door_state = null, ?string $other_info = null): void {
+        $db1 = null;
+        try {
+            $db1 = new PDO('mysql:host=127.0.0.1;dbname=elevator', 'ese', 'ese');
+            $db1->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            if ($node_ID <= 0) {
+                throw new InvalidArgumentException("Error: Invalid node ID provided.");
+            }
+
+            if ($new_floor !== null && ($new_floor < 1 || $new_floor > 3)) {
+                throw new InvalidArgumentException("Error: Floor number out of bounds (must be between 1 and 3).");
+            }
+
+            if ($door_state !== null && $door_state !== 'Open' && $door_state !== 'Closed') {
+                throw new InvalidArgumentException("Error: Invalid door state value.");
+            }
+
+            $db1->beginTransaction();
+
+            $stmtCurrent = $db1->prepare("SELECT currentFloor, requestedFloor, doorState, otherInfo, MAC_address FROM elevatorNetwork WHERE nodeID = :id FOR UPDATE");
+            $stmtCurrent->execute([':id' => $node_ID]);
+            $currentData = $stmtCurrent->fetch(PDO::FETCH_ASSOC);
+
+            if (!$currentData) {
+                throw new Exception("Error: Node ID {$node_ID} not found in the database.");
+            }
+
+            $currFlr = $currentData['currentFloor'] ?? 1;
+            $reqFlr = $currentData['requestedFloor'] ?? 1;
+            $doorSt = $currentData['doorState'] ?? 'Closed';
+            $otherIn = $currentData['otherInfo'] ?? 'System Initialization';
+            $macAddr = $currentData['MAC_address'] ?? '00:00:00:00:00:00';
+
+            $fields = [];
+            $params = [':id' => $node_ID];
+
+            if ($new_floor !== null) {
+                $fields[] = "currentFloor = :floor";
+                $params[':floor'] = $new_floor;
+                $currFlr = $new_floor;
+                $fields[] = "otherInfo = :clearedInfo";
+                $params[':clearedInfo'] = 'Normal';
+                $otherIn = 'Normal';
+            }
+            if ($requested_floor !== null) {
+                $fields[] = "requestedFloor = :reqFloor";
+                $params[':reqFloor'] = $requested_floor;
+                $reqFlr = $requested_floor;
+            }
+            if ($door_state !== null) {
+                $fields[] = "doorState = :doorState";
+                $params[':doorState'] = $door_state;
+                $doorSt = $door_state;
+            }
+            if ($other_info !== null) {
+                $fields[] = "otherInfo = :otherInfo";
+                $params[':otherInfo'] = $other_info;
+                $otherIn = $other_info;
+            }
+
+            if (!empty($fields)) {
+                $query = 'UPDATE elevatorNetwork SET ' . implode(', ', $fields) . ' WHERE nodeID = :id';
+                $statement = $db1->prepare($query);
+                foreach ($params as $key => $val) {
+                    $statement->bindValue($key, $val, is_int($val) ? PDO::PARAM_INT : PDO::PARAM_STR);
+                }
+                $statement->execute();
+            }
+
+            $logQuery = 'INSERT INTO elevatorLogs (nodeID, date, time, currentFloor, requestedFloor, doorState, otherInfo, MAC_address)  
+                         VALUES (:nodeID, CURDATE(), CURTIME(), :currFlr, :reqFlr, :doorSt, :otherIn, :macAddr)';
+            $logStmt = $db1->prepare($logQuery);
+            $logStmt->execute([
+                ':nodeID' => $node_ID,
+                ':currFlr' => $currFlr,
+                ':reqFlr' => $reqFlr,
+                ':doorSt' => $doorSt,
+                ':otherIn' => $otherIn,
+                ':macAddr' => $macAddr
+            ]);
+
+            $db1->commit();
+
+        } catch (Exception $e) {
+            if ($db1 && $db1->inTransaction()) {
+                $db1->rollBack();
+            }
+            throw $e;
+        }
+    }
+
+    function get_elevator_status(): array {
+        $default_data = ['currentFloor' => 1, 'doorState' => 'Closed', 'otherInfo' => 'Normal'];
+        try {
+            $db = new PDO('mysql:host=127.0.0.1;dbname=elevator', 'ese', 'ese');
+            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $stmt = $db->query('SELECT currentFloor, doorState, otherInfo FROM elevatorNetwork LIMIT 1');
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row ? $row : $default_data;
+        } catch (PDOException $e) {
+            return $default_data;
+        }
+    }
+
+    function get_sabbathMode(): bool {
+        try {
+            $db = new PDO('mysql:host=127.0.0.1;dbname=elevator', 'ese', 'ese');
+            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $rows = $db->query('SELECT sabbathMode FROM elevatorNetwork LIMIT 1');
+            foreach ($rows as $row) {
+                return (bool)$row[0];
+            }
+            return false;
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    function set_sabbathMode(bool $enabled) {
+        try {
+            $db = new PDO('mysql:host=127.0.0.1;dbname=elevator', 'ese', 'ese');
+            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $statement = $db->prepare('UPDATE elevatorNetwork SET sabbathMode = :value');
+            $statement->bindValue(':value', $enabled ? 1 : 0, PDO::PARAM_INT);
+            $statement->execute();
+        } catch (PDOException $e) {
+            die("Database Error: " . $e->getMessage());
+        }
+    }
+
+    function get_maintenanceMode(): bool {
+        try {
+            $db = new PDO('mysql:host=127.0.0.1;dbname=elevator', 'ese', 'ese');
+            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $rows = $db->query('SELECT maintenanceMode FROM elevatorNetwork LIMIT 1');
+            foreach ($rows as $row) {
+                return (bool)$row[0];
+            }
+            return false;
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    function set_maintenanceMode(bool $enabled) {
+        try {
+            $db = new PDO('mysql:host=127.0.0.1;dbname=elevator', 'ese', 'ese');
+            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $statement = $db->prepare('UPDATE elevatorNetwork SET maintenanceMode = :value');
+            $statement->bindValue(':value', $enabled ? 1 : 0, PDO::PARAM_INT);
+            $statement->execute();
+        } catch (PDOException $e) {
+            die("Database Error: " . $e->getMessage());
+        }
+    }
 
     $isLoggedIn = !empty($_SESSION['is_logged_in']);
-    $maintenanceMode = $elevator->getMaintenanceMode();
-    $sabbathMode = $elevator->getSabbathMode();
+    $maintenanceMode = get_maintenanceMode();
+    $sabbathMode = get_sabbathMode();
 
     // Maintenance lock-out toggle
     if (isset($_POST['toggle_maintenance'])) {
         if (!REQUIRE_LOGIN_FOR_MAINTENANCE || $isLoggedIn) {
             $maintenanceMode = !$maintenanceMode;
-            $elevator->setMaintenanceMode($maintenanceMode);
+            set_maintenanceMode($maintenanceMode);
 
             if ($maintenanceMode) {
-                $elevator->setSabbathMode(false);
+                set_sabbathMode(false);
             }
         }
         header('Location: index.php');
@@ -40,7 +188,7 @@
     // Sabbath mode toggle
     if (isset($_POST['toggle_sabbath'])) {
         if (!$maintenanceMode) {
-            $elevator->setSabbathMode(!$sabbathMode);
+            set_sabbathMode(!$sabbathMode);
         }
         header('Location: index.php');
         exit;
@@ -51,7 +199,7 @@
         if (!$maintenanceMode) {
             try {
                 $targetFloor = (int)$_POST['newfloor'];
-                $elevator->updateNetwork(new_floor: $targetFloor, requested_floor: $targetFloor); 
+                update_elevatorNetwork(1, new_floor: $targetFloor, requested_floor: $targetFloor); 
             } catch (Exception $e) {
                 error_log($e->getMessage());
             }
@@ -66,11 +214,11 @@
         if (!$maintenanceMode || $action === 'Alarm') {
             try {
                 if ($action === 'Open') {
-                    $elevator->updateNetwork(door_state: 'Open');
+                    update_elevatorNetwork(1, door_state: 'Open');
                 } elseif ($action === 'Closed') {
-                    $elevator->updateNetwork(door_state: 'Closed');
+                    update_elevatorNetwork(1, door_state: 'Closed');
                 } elseif ($action === 'Alarm') {
-                    $elevator->updateNetwork(other_info: 'ALARM TRIGGERED');
+                    update_elevatorNetwork(1, other_info: 'ALARM TRIGGERED');
                 }
             } catch (Exception $e) {
                 error_log($e->getMessage());
@@ -80,21 +228,10 @@
         exit;
     }
 
-    // Default fallback values in case of communication failure
-    $curFlr = 1;
-    $doorState = 'Closed';
-    $otherInfo = '';
-    
-    try {
-        $elevatorData = $elevator->getStatus();
-        $curFlr = $elevatorData['currentFloor'] ?? 1;
-        $doorState = $elevatorData['doorState'] ?? 'Closed';
-        $otherInfo = $elevatorData['otherInfo'] ?? '';
-    } catch (Exception $e) {
-        error_log($e->getMessage());
-        $otherInfo = 'COMMUNICATION ERROR';
-    }
-
+    $elevatorData = get_elevator_status();
+    $curFlr = $elevatorData['currentFloor'];
+    $doorState = $elevatorData['doorState'];
+    $otherInfo = $elevatorData['otherInfo'];
     $controlsLocked = $maintenanceMode || $sabbathMode;
 ?>
 <!DOCTYPE html>
@@ -121,8 +258,6 @@
                 <?php endif; ?>
                 <?php if ($otherInfo === 'ALARM TRIGGERED'): ?>
                     <br><span style="color: red; font-weight: bold;">⚠️ ALARM ACTIVE</span>
-                <?php elseif ($otherInfo === 'COMMUNICATION ERROR'): ?>
-                    <br><span style="color: red; font-weight: bold;">⚠️ COMMUNICATION ERROR</span>
                 <?php endif; ?>
             </div>
             <hr />
@@ -138,7 +273,7 @@
             
             <form action="index.php" method="POST">
                 <h2>Car Control</h2>
-                <input type="number" name="newfloor" max="<?php echo $floorNodeConfig->getMaxFloor(); ?>" min="<?php echo $floorNodeConfig->getMinFloor(); ?>" required value="<?php echo $curFlr; ?>" <?php echo $controlsLocked ? 'disabled' : ''; ?> />
+                <input type="number" name="newfloor" max="3" min="1" required value="<?php echo $curFlr; ?>" <?php echo $controlsLocked ? 'disabled' : ''; ?> />
                 <input type="submit" value="Go" class="btn" <?php echo $controlsLocked ? 'disabled' : ''; ?>/>
             </form>
 
@@ -193,8 +328,8 @@
         <?php if ($sabbathMode && !$maintenanceMode): ?>
         <script>
             (function () {
-                var MIN_FLOOR = <?php echo $floorNodeConfig->getMinFloor(); ?>;
-                var MAX_FLOOR = <?php echo $floorNodeConfig->getMaxFloor(); ?>;
+                var MIN_FLOOR = <?php echo MIN_FLOOR; ?>;
+                var MAX_FLOOR = <?php echo MAX_FLOOR; ?>;
                 var current = <?php echo (int)$curFlr; ?>;
 
                 setTimeout(function () {
@@ -215,7 +350,7 @@
                     form.appendChild(input);
                     document.body.appendChild(form);
                     form.submit();
-                }, <?php echo $floorNodeConfig->getSabbathDwellMs(); ?>);
+                }, <?php echo SABBATH_DWELL_MS; ?>);
             })();
         </script>
         <?php endif; ?>
