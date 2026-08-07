@@ -32,8 +32,6 @@ window.addEventListener("load", function () {
 document.getElementById("requestForm").addEventListener("submit",
 function(event){
 
-    event.preventDefault();
-
     const fullName =
         document.getElementById("fullName").value.trim();
 
@@ -54,16 +52,12 @@ function(event){
        role === "" ||
        reason === "")
     {
+        event.preventDefault();
+
         message.textContent =
         "Please complete all required fields.";
 
         message.style.color = "red";
-        return;
     }
-
-    message.textContent =
-    "Request submitted successfully.";
-
-    message.style.color = "green";
 
 });
