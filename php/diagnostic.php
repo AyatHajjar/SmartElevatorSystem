@@ -3,7 +3,6 @@
         $db = new PDO('mysql:host=127.0.0.1;dbname=elevator', 'ese', 'ese');
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
-        // Fetch full history logs ordered by newest first from elevatorLogs
         $query = 'SELECT logID, nodeID, date, time, currentFloor, requestedFloor, doorState, otherInfo, MAC_address FROM elevatorLogs ORDER BY logID DESC';
         $statement = $db->query($query);
         $records = $statement->fetchAll(PDO::FETCH_ASSOC);
