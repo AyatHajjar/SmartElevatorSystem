@@ -1,0 +1,17 @@
+<html>
+    <body>
+        <h2>Update, delete or add data to the database</h2>
+        <form action="member.php" method="post">
+            node ID: <input type='text' name='nodeID' /><em> - Use this to select a row for update/delete</em><br/>
+            doorState: <input type='text' name='doorState' required /><br/>
+            currentFloor: <input type='number' name="currentFloor" required /><br/>
+            requestedFloor: <input type="number" name="requestedFloor" required /><br/>
+            otherInfo: <input type="text" name="otherInfo" /><br />
+            MAC address: <input type="text" name="MAC_address" required /><br />
+            <input type="submit" value="INSERT" name="insert" />
+            <input type="submit" value="DELETE" name="delete" />
+            <input type="submit" value="UPDATE" name="update" />
+
+        </form>
+    </body>
+</html>
