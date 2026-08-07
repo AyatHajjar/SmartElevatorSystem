@@ -1,65 +1,27 @@
-<?php
+<?php 
+    // authentication.php
     session_start();
-    
-    $jsonFile = "../json/authorizedUsers.json";
-    
-    // Write JSON
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        echo "<h1>Request Access Information</h1>";
+    $username= $_POST['username'];
+    $password = $_POST['password'];
+    $authenticated = FALSE;
 
-        $formData = [
-            "username" => $_POST["username"] ?? "",
-            "password" => $_POST["password"] ?? ""
-        ];
+    $db = new PDO('mysql:host=127.0.0.1;dbname=elevator', 'ese', 'ese');
+    $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
-        $existingData = [];
-        if (file_exists($jsonFile)) {
-            $fileContents = file_get_contents($jsonFile);
-            $existingData = json_decode($fileContents, true) ?? [];
+    $query = "SELECT * FROM authorizedUsers WHERE username = '$username'";
+    $rows = $db->query($query);
+    foreach ($rows as $row) {
+        echo $row['username'];
+        if($username === $row['username'] && $password === $row['password']) {
+            $authenticated = TRUE;
         }
-        //Below is if you want to new logins into the json
-        //file_put_contents($jsonFile, json_encode($existingData, JSON_PRETTY_PRINT));
-        
-        
-        // Check if user&pass is in database //////////////////////////////////////////////////
-        $accessGranted = false;
-        foreach ($existingData as $userRecord) {
-            if ($userRecord["username"] === $formData["username"] && $userRecord["password"] === $formData["password"]) {
-                $accessGranted = true;
-                break;
-            }
-        }
-        
-        // Display member link if access is granted
-        if ($accessGranted) {
-            echo '<p>Login Matches! You are a member</p>';
-            echo '<p><a href="member.php">member</a></p>';
-            
-            $_SESSION["is_logged_in"] = true;
-            $_SESSION["username"] = $formData["username"];
-        } else {
-            echo '<p>Access Denied: your not a member</p>';
-        }
-        ///////////////////////////////////////////////////////////////////////////////
-       
-        
-        // Read JSON
-        if (file_exists($jsonFile)) {
-            $loginJson = file_get_contents($jsonFile);
-            $loginRequests = json_decode($loginJson, true) ?? [];
+    }
 
-            echo "<h2>All Stored Requests:</h2>";
-            foreach ($loginRequests as $request) {
-                $user = htmlspecialchars($request["username"] ?? "N/A");
-                $pass = htmlspecialchars($request["password"] ?? "N/A");
-               
-                echo "<strong>User:</strong> " . $user . "<br>";
-                echo "<strong>Pass:</strong> " . $pass . "<br>";
-                echo "<hr>";
-            }
-        }
-
+    if($authenticated) {
+        $_SESSION['username'] = $username;  
+        echo "<p>Congrats, you a logged in</p>"; 
+        echo "<p>Click <a href='member.php'> here </a> to goto the members only page</p>";
     } else {
-        echo "No Access.";
+        echo "<p>You are not authenticated!!!!</p>"; 
     }
 ?>
