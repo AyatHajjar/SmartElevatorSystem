@@ -1,55 +1,152 @@
-<?php 
-    session_start(); 
+<?php
+session_start();
 
-    // Members only section
-    if(isset($_SESSION['username'])) {
-        // Include the database functions file
-        require 'databaseFunctions.php';
+if (!isset($_SESSION['username'])) {
+    echo '<p>Not authorized</p>';
+    exit;
+}
 
-        // Initialize variables
-        $host = '127.0.0.1'; 
-        $database = 'elevator'; 
-        $tablename = 'elevatorNetwork'; 
-        $path = 'mysql:host=' . $host . ';dbname=' . $database; 
-        $user = 'groupfive'; 
-        $password = 'ese1234';
+require_once __DIR__ . '/oop/DatabaseConnector.php';
+$pdo = (new DatabaseConnector())->connect();
 
-        // Connect to database and make changes
-        $db = connect($path, $user, $password);
-        
-        // Get data from db and/or form       
-        $curr_date_query = $db->query('SELECT CURRENT_DATE()'); 
-        $current_date = $curr_date_query->fetch(PDO::FETCH_ASSOC);
-        $current_time_query = $db->query('SELECT CURRENT_TIME()');
-        $current_time = $current_time_query->fetch(PDO::FETCH_ASSOC);
-        if(isset($_POST['nodeID'])) { $nodeID = $_POST['nodeID']; }
-        if(isset($_POST['status'])) { $status = $_POST['status']; }
-        if(isset($_POST['currentFloor'])) { $currentFloor = $_POST['currentFloor']; }
-        if(isset($_POST['requestedFloor'])) { $requestedFloor = $_POST['requestedFloor']; }
-        if(isset($_POST['otherInfo'])) { $otherInfo = $_POST['otherInfo']; }
+$message = '';
+$action  = $_POST['action'] ?? '';
 
-        // Display welcome and form
-        echo "<h1>Welcome, " . $_SESSION['username'] . "</h1>";
-        require 'elevatorNetworkForm.html';
-            
-        if(isset($_POST['insert'])) {
-            echo "You pressed INSERT <br>"; 
-            insert($path, $user, $password, $current_date, $current_time, $status, $currentFloor, $requestedFloor, $otherInfo);
+if ($action === 'insert') {
+    $stmt = $pdo->prepare("INSERT INTO elevatorNetwork (currentFloor, requestedFloor, doorState, otherInfo, MAC_address, sabbathMode, maintenanceMode) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([
+        $_POST['currentFloor'],
+        $_POST['requestedFloor'],
+        $_POST['doorState'],
+        $_POST['otherInfo'],
+        $_POST['MAC_address'],
+        $_POST['sabbathMode'] ?? 0,
+        $_POST['maintenanceMode'] ?? 0,
+    ]);
+    $message = 'Node added.';
+}
 
-        } elseif(isset($_POST['update'])) {
-            echo "You pressed UPDATE <br>";
-            update($path, $user, $password, $tablename, $nodeID, $status, $currentFloor, $requestedFloor, $otherInfo);
+if ($action === 'update') {
+    $stmt = $pdo->prepare("UPDATE elevatorNetwork SET currentFloor = ?, requestedFloor = ?, doorState = ?, otherInfo = ?, MAC_address = ?, sabbathMode = ?, maintenanceMode = ? WHERE nodeID = ?");
+    $stmt->execute([
+        $_POST['currentFloor'],
+        $_POST['requestedFloor'],
+        $_POST['doorState'],
+        $_POST['otherInfo'],
+        $_POST['MAC_address'],
+        $_POST['sabbathMode'] ?? 0,
+        $_POST['maintenanceMode'] ?? 0,
+        $_POST['nodeID'],
+    ]);
+    $message = 'Node updated.';
+}
 
-        } elseif(isset($_POST['delete'])) {
-            echo 'You pressed DELETE <br>';
-            delete($path, $user, $password, $tablename, $nodeID);
-        } 
-        // Display content of database
-        showtable($path, $user, $password, $tablename);
-        // Sign out option
-        echo "<p>Click <a href='logout.php'>here</a> to sign out</p>";
-    } else {
-        echo "<p>You are not authorized!</p>";
+if ($action === 'delete') {
+    $stmt = $pdo->prepare("DELETE FROM elevatorNetwork WHERE nodeID = ?");
+    $stmt->execute([$_POST['nodeID']]);
+    $message = 'Node deleted.';
+}
+
+$nodes = $pdo->query("SELECT * FROM elevatorNetwork ORDER BY nodeID")->fetchAll(PDO::FETCH_ASSOC);
+
+$editRow = null;
+foreach ($nodes as $node) {
+    if (isset($_GET['edit']) && $node['nodeID'] == $_GET['edit']) {
+        $editRow = $node;
     }
-
+}
 ?>
+<!DOCTYPE html>
+<html>
+<body>
+
+<p>Members Only</p>
+<p><a href="index.php">Elevator</a></p>
+<p><a href="logout.php">logout</a></p>
+
+<?php if ($message): ?>
+<p><?= htmlspecialchars($message) ?></p>
+<?php endif; ?>
+
+<h2>Add New Node</h2>
+<form method="post" action="member.php">
+    <input type="hidden" name="action" value="insert">
+    Current Floor: <input type="number" name="currentFloor" required><br>
+    Requested Floor: <input type="number" name="requestedFloor" required><br>
+    Door State:
+    <select name="doorState">
+        <option value="Closed">Closed</option>
+        <option value="Open">Open</option>
+    </select><br>
+    Other Info: <input type="text" name="otherInfo"><br>
+    MAC Address: <input type="text" name="MAC_address" required><br>
+    Sabbath Mode:
+    <select name="sabbathMode">
+        <option value="0">Off</option>
+        <option value="1">On</option>
+    </select><br>
+    Maintenance Mode:
+    <select name="maintenanceMode">
+        <option value="0">Off</option>
+        <option value="1">On</option>
+    </select><br>
+    <button type="submit">Add Node</button>
+</form>
+
+<h2>Elevator Network Nodes</h2>
+<table border="1" cellpadding="5">
+    <tr>
+        <th>ID</th><th>Current Floor</th><th>Requested Floor</th><th>Door</th><th>Other Info</th><th>MAC Address</th><th>Sabbath</th><th>Maintenance</th><th>Actions</th>
+    </tr>
+<?php foreach ($nodes as $node): ?>
+    <tr>
+        <td><?= $node['nodeID'] ?></td>
+        <td><?= $node['currentFloor'] ?></td>
+        <td><?= $node['requestedFloor'] ?></td>
+        <td><?= htmlspecialchars($node['doorState']) ?></td>
+        <td><?= htmlspecialchars($node['otherInfo']) ?></td>
+        <td><?= htmlspecialchars($node['MAC_address']) ?></td>
+        <td><?= $node['sabbathMode'] ? 'On' : 'Off' ?></td>
+        <td><?= $node['maintenanceMode'] ? 'On' : 'Off' ?></td>
+        <td>
+            <a href="member.php?edit=<?= $node['nodeID'] ?>">Edit</a>
+            <form method="post" action="member.php" style="display:inline">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="nodeID" value="<?= $node['nodeID'] ?>">
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+<?php endforeach; ?>
+</table>
+
+<?php if ($editRow): ?>
+<h2>Edit Node</h2>
+<form method="post" action="member.php">
+    <input type="hidden" name="action" value="update">
+    <input type="hidden" name="nodeID" value="<?= $editRow['nodeID'] ?>">
+    Current Floor: <input type="number" name="currentFloor" value="<?= $editRow['currentFloor'] ?>" required><br>
+    Requested Floor: <input type="number" name="requestedFloor" value="<?= $editRow['requestedFloor'] ?>" required><br>
+    Door State:
+    <select name="doorState">
+        <option value="Closed" <?= $editRow['doorState'] === 'Closed' ? 'selected' : '' ?>>Closed</option>
+        <option value="Open" <?= $editRow['doorState'] === 'Open' ? 'selected' : '' ?>>Open</option>
+    </select><br>
+    Other Info: <input type="text" name="otherInfo" value="<?= htmlspecialchars($editRow['otherInfo']) ?>"><br>
+    MAC Address: <input type="text" name="MAC_address" value="<?= htmlspecialchars($editRow['MAC_address']) ?>" required><br>
+    Sabbath Mode:
+    <select name="sabbathMode">
+        <option value="0" <?= !$editRow['sabbathMode'] ? 'selected' : '' ?>>Off</option>
+        <option value="1" <?= $editRow['sabbathMode'] ? 'selected' : '' ?>>On</option>
+    </select><br>
+    Maintenance Mode:
+    <select name="maintenanceMode">
+        <option value="0" <?= !$editRow['maintenanceMode'] ? 'selected' : '' ?>>Off</option>
+        <option value="1" <?= $editRow['maintenanceMode'] ? 'selected' : '' ?>>On</option>
+    </select><br>
+    <button type="submit">Save Changes</button>
+</form>
+<?php endif; ?>
+
+</body>
+</html>
