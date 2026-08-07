@@ -1,108 +1,55 @@
-<?php
-session_start();
+<?php 
+    session_start(); 
 
-if (!isset($_SESSION['username'])) {
-    echo '<p>Not authorized</p>';
-    exit;
-}
+    // Members only section
+    if(isset($_SESSION['username'])) {
+        // Include the database functions file
+        require 'databaseFunctions.php';
 
-require_once __DIR__ . '/oop/DatabaseConnector.php';
-$pdo = (new DatabaseConnector())->connect();
+        // Initialize variables
+        $host = '127.0.0.1'; 
+        $database = 'elevator'; 
+        $tablename = 'elevatorNetwork'; 
+        $path = 'mysql:host=' . $host . ';dbname=' . $database; 
+        $user = 'groupfive'; 
+        $password = 'ese1234';
 
-$message = '';
-$action  = $_POST['action'] ?? '';
+        // Connect to database and make changes
+        $db = connect($path, $user, $password);
+        
+        // Get data from db and/or form       
+        $curr_date_query = $db->query('SELECT CURRENT_DATE()'); 
+        $current_date = $curr_date_query->fetch(PDO::FETCH_ASSOC);
+        $current_time_query = $db->query('SELECT CURRENT_TIME()');
+        $current_time = $current_time_query->fetch(PDO::FETCH_ASSOC);
+        if(isset($_POST['nodeID'])) { $nodeID = $_POST['nodeID']; }
+        if(isset($_POST['status'])) { $status = $_POST['status']; }
+        if(isset($_POST['currentFloor'])) { $currentFloor = $_POST['currentFloor']; }
+        if(isset($_POST['requestedFloor'])) { $requestedFloor = $_POST['requestedFloor']; }
+        if(isset($_POST['otherInfo'])) { $otherInfo = $_POST['otherInfo']; }
 
-if ($action === 'insert') {
-    $stmt = $pdo->prepare("INSERT INTO elevatorNetwork (nodeName, nodeType, floorNumber, status) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$_POST['nodeName'], $_POST['nodeType'], $_POST['floorNumber'], $_POST['status']]);
-    $message = 'Node added.';
-}
+        // Display welcome and form
+        echo "<h1>Welcome, " . $_SESSION['username'] . "</h1>";
+        require 'elevatorNetworkForm.html';
+            
+        if(isset($_POST['insert'])) {
+            echo "You pressed INSERT <br>"; 
+            insert($path, $user, $password, $current_date, $current_time, $status, $currentFloor, $requestedFloor, $otherInfo);
 
-if ($action === 'update') {
-    $stmt = $pdo->prepare("UPDATE elevatorNetwork SET nodeName = ?, nodeType = ?, floorNumber = ?, status = ? WHERE nodeID = ?");
-    $stmt->execute([$_POST['nodeName'], $_POST['nodeType'], $_POST['floorNumber'], $_POST['status'], $_POST['nodeID']]);
-    $message = 'Node updated.';
-}
+        } elseif(isset($_POST['update'])) {
+            echo "You pressed UPDATE <br>";
+            update($path, $user, $password, $tablename, $nodeID, $status, $currentFloor, $requestedFloor, $otherInfo);
 
-if ($action === 'delete') {
-    $stmt = $pdo->prepare("DELETE FROM elevatorNetwork WHERE nodeID = ?");
-    $stmt->execute([$_POST['nodeID']]);
-    $message = 'Node deleted.';
-}
-
-$nodes = $pdo->query("SELECT * FROM elevatorNetwork ORDER BY nodeID")->fetchAll(PDO::FETCH_ASSOC);
-
-$editRow = null;
-foreach ($nodes as $node) {
-    if (isset($_GET['edit']) && $node['nodeID'] == $_GET['edit']) {
-        $editRow = $node;
+        } elseif(isset($_POST['delete'])) {
+            echo 'You pressed DELETE <br>';
+            delete($path, $user, $password, $tablename, $nodeID);
+        } 
+        // Display content of database
+        showtable($path, $user, $password, $tablename);
+        // Sign out option
+        echo "<p>Click <a href='logout.php'>here</a> to sign out</p>";
+    } else {
+        echo "<p>You are not authorized!</p>";
     }
-}
+
 ?>
-<!DOCTYPE html>
-<html>
-<body>
-
-<p>Members Only</p>
-<p><a href="index.php">Elevator</a></p>
-<p><a href="logout.php">logout</a></p>
-
-<?php if ($message): ?>
-<p><?= htmlspecialchars($message) ?></p>
-<?php endif; ?>
-
-<h2>Add New Node</h2>
-<form method="post" action="member.php">
-    <input type="hidden" name="action" value="insert">
-    Node Name: <input type="text" name="nodeName" required><br>
-    Node Type: <input type="text" name="nodeType" required><br>
-    Floor Number: <input type="number" name="floorNumber" required><br>
-    Status:
-    <select name="status">
-        <option value="active">active</option>
-        <option value="inactive">inactive</option>
-    </select><br>
-    <button type="submit">Add Node</button>
-</form>
-
-<h2>Elevator Network Nodes</h2>
-<table border="1" cellpadding="5">
-    <tr><th>ID</th><th>Name</th><th>Type</th><th>Floor</th><th>Status</th><th>Actions</th></tr>
-<?php foreach ($nodes as $node): ?>
-    <tr>
-        <td><?= $node['nodeID'] ?></td>
-        <td><?= htmlspecialchars($node['nodeName']) ?></td>
-        <td><?= htmlspecialchars($node['nodeType']) ?></td>
-        <td><?= $node['floorNumber'] ?></td>
-        <td><?= htmlspecialchars($node['status']) ?></td>
-        <td>
-            <a href="member.php?edit=<?= $node['nodeID'] ?>">Edit</a>
-            <form method="post" action="member.php" style="display:inline">
-                <input type="hidden" name="action" value="delete">
-                <input type="hidden" name="nodeID" value="<?= $node['nodeID'] ?>">
-                <button type="submit">Delete</button>
-            </form>
-        </td>
-    </tr>
-<?php endforeach; ?>
-</table>
-
-<?php if ($editRow): ?>
-<h2>Edit Node</h2>
-<form method="post" action="member.php">
-    <input type="hidden" name="action" value="update">
-    <input type="hidden" name="nodeID" value="<?= $editRow['nodeID'] ?>">
-    Node Name: <input type="text" name="nodeName" value="<?= htmlspecialchars($editRow['nodeName']) ?>" required><br>
-    Node Type: <input type="text" name="nodeType" value="<?= htmlspecialchars($editRow['nodeType']) ?>" required><br>
-    Floor Number: <input type="number" name="floorNumber" value="<?= $editRow['floorNumber'] ?>" required><br>
-    Status:
-    <select name="status">
-        <option value="active" <?= $editRow['status'] === 'active' ? 'selected' : '' ?>>active</option>
-        <option value="inactive" <?= $editRow['status'] === 'inactive' ? 'selected' : '' ?>>inactive</option>
-    </select><br>
-    <button type="submit">Save Changes</button>
-</form>
-<?php endif; ?>
-
-</body>
-</html>
