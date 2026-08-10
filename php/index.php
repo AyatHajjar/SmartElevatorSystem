@@ -5,21 +5,30 @@
 
     session_start();
 
+    // Include OOP structural classes from the 'oop' folder
     require_once 'oop/DatabaseConnector.php';
     require_once 'oop/ElevatorCar.php';
     require_once 'oop/FloorNode.php';
 
-    define('REQUIRE_LOGIN_FOR_MAINTENANCE', false); //<-- set this back to true before real implementation
+    define('REQUIRE_LOGIN_FOR_MAINTENANCE', false); // set back to true before real use
 
+    // Initialize dependencies
     $dbConnector = new DatabaseConnector();
     $pdo = $dbConnector->connect();
     
     $floorNodeConfig = new FloorNode(1, 3, 5000);
 
+    // Track active elevator (Elevator 1 or Elevator 2)
     if (!isset($_SESSION['active_elevator'])) {
         $_SESSION['active_elevator'] = 1;
     }
     $elevatorId = $_SESSION['active_elevator'];
+
+    // Track Auto Return to Floor 1 state (default: true)
+    if (!isset($_SESSION['auto_return_floor_1'])) {
+        $_SESSION['auto_return_floor_1'] = true;
+    }
+    $autoReturnEnabled = $_SESSION['auto_return_floor_1'];
     
     $elevator = new ElevatorCar($pdo, 1);
 
@@ -27,6 +36,7 @@
     $maintenanceMode = $elevator->getMaintenanceMode();
     $sabbathMode = $elevator->getSabbathMode();
 
+    // Maintenance lock-out toggle
     if (isset($_POST['toggle_maintenance'])) {
         if (!REQUIRE_LOGIN_FOR_MAINTENANCE || $isLoggedIn) {
             $maintenanceMode = !$maintenanceMode;
@@ -40,6 +50,7 @@
         exit;
     }
 
+    // Sabbath mode toggle
     if (isset($_POST['toggle_sabbath'])) {
         if (!$maintenanceMode) {
             $elevator->setSabbathMode(!$sabbathMode);
@@ -48,14 +59,26 @@
         exit;
     }
 
+    // Switch Elevator toggle
     if (isset($_POST['toggle_elevator'])) {
         if (!$maintenanceMode) {
+            // Switch active elevator ID (1 <-> 2)
             $_SESSION['active_elevator'] = ($elevatorId == 1) ? 2 : 1;
         }
         header('Location: index.php');
         exit;
     }
 
+    // Toggle Auto Return to Floor 1
+    if (isset($_POST['toggle_auto_return'])) {
+        if (!$maintenanceMode) {
+            $_SESSION['auto_return_floor_1'] = !$autoReturnEnabled;
+        }
+        header('Location: index.php');
+        exit;
+    }
+
+    // Fetch current floor from the hardware/database
     try {
         $elevatorData = $elevator->getStatus();
         $curFlr = $elevatorData['currentFloor'] ?? 1;
@@ -63,6 +86,7 @@
         $curFlr = 1;
     }
 
+    // When Elevator 2 mode is active, invert the floor representation (1<->3 swap)
     $displayFlr = $curFlr;
     if ($elevatorId == 2) {
         $min = $floorNodeConfig->getMinFloor();
@@ -70,11 +94,13 @@
         $displayFlr = ($min + $max) - $curFlr;
     }
 
+    // Floor changes via buttons or numeric input
     if (isset($_POST['newfloor'])) {
         if (!$maintenanceMode) {
             try {
                 $targetFloor = (int)$_POST['newfloor'];
                 
+                // If Elevator 2 is active, convert the visual target floor back to the underlying physical floor mapping
                 if ($elevatorId == 2) {
                     $min = $floorNodeConfig->getMinFloor();
                     $max = $floorNodeConfig->getMaxFloor();
@@ -90,6 +116,7 @@
         exit;
     } 
 
+    // Actions for Door Open/Close and Alarm
     if (isset($_POST['action'])) {
         $action = $_POST['action'];
         if (!$maintenanceMode || $action === 'Alarm') {
@@ -109,6 +136,7 @@
         exit;
     }
 
+    // Default fallback values in case of communication failure
     $doorState = 'Closed';
     $otherInfo = '';
     
@@ -121,6 +149,7 @@
         $otherInfo = 'COMMUNICATION ERROR';
     }
 
+    // Track audio playback: Only play if the display floor actually changed
     $playAudio = false;
     if (isset($_SESSION['last_announced_floor']) && $_SESSION['last_announced_floor'] != $displayFlr) {
         $playAudio = true;
@@ -191,6 +220,7 @@
             <div class="mode-status">
                 Active Elevator: <strong>Elevator <?php echo $elevatorId; ?></strong><br />
                 Sabbath Mode: <strong><?php echo $sabbathMode ? 'ON' : 'OFF'; ?></strong><br />
+                Auto Return (Floor 1): <strong><?php echo $autoReturnEnabled ? 'ON' : 'OFF'; ?></strong><br />
                 Maintenance Lock-out: <strong><?php echo $maintenanceMode ? 'ON' : 'OFF'; ?></strong>
             </div>
 
@@ -207,6 +237,14 @@
                     class="btn <?php echo $sabbathMode ? 'active' : ''; ?>"
                     <?php echo $maintenanceMode ? 'disabled' : ''; ?>>
                     <?php echo $sabbathMode ? 'Disable' : 'Enable'; ?> Sabbath Mode
+                </button>
+            </form>
+
+            <form action="index.php" method="POST" class="mode-buttons">
+                <button type="submit" name="toggle_auto_return" value="1"
+                    class="btn <?php echo $autoReturnEnabled ? 'active' : ''; ?>"
+                    <?php echo $maintenanceMode ? 'disabled' : ''; ?>>
+                    <?php echo $autoReturnEnabled ? 'Disable' : 'Enable'; ?> Auto Floor 1
                 </button>
             </form>
 
@@ -262,7 +300,7 @@
                 }, <?php echo $floorNodeConfig->getSabbathDwellMs(); ?>);
             })();
         </script>
-        <?php elseif (!$controlsLocked && (int)$displayFlr !== 1): ?>
+        <?php elseif ($autoReturnEnabled && !$controlsLocked && (int)$displayFlr !== 1): ?>
         <script>
             (function () {
                 setTimeout(function () {
@@ -278,7 +316,7 @@
                     form.appendChild(input);
                     document.body.appendChild(form);
                     form.submit();
-                }, 10000);
+                }, 10000); // 10 seconds
             })();
         </script>
         <?php endif; ?>
