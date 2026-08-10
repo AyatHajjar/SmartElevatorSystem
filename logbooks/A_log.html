@@ -341,7 +341,7 @@ CAN communication was verified using the Raspberry Pi terminal and Tera Term. Th
         </figcaption>
 </section>
 <section class="logbook-entry">
-    <h2>Phase 3 Research – CAN/LAN Communication and Database Logging</h2>
+    <h2>Phase 3 Research – CAN/LAN Communication and Database Week 12 </h2>
 
     <p>
         This week, I reviewed the existing Raspberry Pi elevator program to
@@ -441,7 +441,268 @@ Elevator → CAN → Raspberry Pi → Database / GUI
 
 </section>
 
+<section class="logbook-entry">
 
+    <h2>Phase 3 – CAN/LAN Communication and Database Logging week 13</h2>
+
+    <p>
+        During Phase 3, I worked on connecting the CAN network with the
+        Raspberry Pi, website, and database. The main goal was to create a
+        working CAN/LAN communication bridge and record real CAN activity from
+        the live elevator system into the database.
+    </p>
+
+    <p>
+        The Raspberry Pi program already used <code>pcanRxOne()</code> to
+        receive CAN messages, <code>pcanTx()</code> to transmit CAN commands,
+        <code>db_getFloorNum()</code> to read floor requests from the database,
+        and <code>db_setFloorNum()</code> to update the elevator floor value.
+        I extended the existing system by adding CAN message logging to the
+        database.
+    </p>
+
+    <h3>CAN Logging Database Table</h3>
+
+    <p>
+        I created a new database table named <code>CAN_logs</code>. The table
+        records each CAN message with the CAN ID, CAN data, direction,
+        controller name, event description, floor number, and timestamp.
+        This allows real CAN traffic from the live elevator system to be
+        reviewed and used as evidence of testing.
+    </p>
+
+    <figure>
+        <img
+            src="../images/table.png"
+            alt="CAN logs database table structure"
+            style="max-width: 100%; height: auto;"
+        >
+
+        <figcaption>
+            Figure 1: Structure of the CAN_logs table used to record live CAN
+            communication.
+        </figcaption>
+    </figure>
+
+    <h3>Raspberry Pi Database Logging</h3>
+
+    <p>
+        I added a new function named <code>db_logCanMessage()</code> to the
+        database functions. The function connects to the MariaDB
+        <code>elevator</code> database and inserts each successful CAN message
+        into the <code>CAN_logs</code> table.
+    </p>
+
+    <p>
+        Received messages are stored as <strong>RX</strong>, while successfully
+        transmitted commands are stored as <strong>TX</strong>. The program also
+        identifies the controller that generated the message and provides a
+        readable description of the event.
+    </p>
+
+    <h3>CAN/LAN Communication Flow</h3>
+
+    <pre>
+GUI / Website
+      ↓
+Database
+      ↓
+Raspberry Pi
+      ↓
+CAN Network
+      ↓
+Physical Elevator
+
+Physical Elevator
+      ↓
+CAN Network
+      ↓
+Raspberry Pi
+      ↓
+Database / CAN_logs
+    </pre>
+
+    <h3>GUI Floor Request Test</h3>
+
+    <p>
+        I tested the communication bridge by generating floor requests from the
+        website. When a floor was selected, the new floor value was detected by
+        the Raspberry Pi and added to the request queue. The Raspberry Pi then
+        transmitted the correct CAN message to the Elevator Controller.
+    </p>
+
+    <p>
+        For example, a request for Floor 3 generated a CAN transmission from the
+        Supervisory Controller. The elevator then moved to Floor 3 and returned
+        CAN messages indicating movement and arrival.
+    </p>
+
+    <figure>
+        <img
+            src="../images/go to floor 3.png"
+            alt="GUI request to move elevator to Floor 3"
+            style="max-width: 100%; height: auto;"
+        >
+
+        <figcaption>
+            Figure 2: Floor 3 request generated from the GUI and processed by
+            the Raspberry Pi.
+        </figcaption>
+    </figure>
+
+    <h3>CAN TX and RX Database Evidence</h3>
+
+    <p>
+        The test confirmed that both transmitted and received CAN traffic was
+        successfully recorded in the database.
+    </p>
+
+    <p>
+        Examples recorded during testing included:
+    </p>
+
+    <ul>
+        <li>
+            <code>0x100 / 0x05 / TX</code> – Supervisory Controller command
+            sent to Floor 1.
+        </li>
+
+        <li>
+            <code>0x100 / 0x06 / TX</code> – Supervisory Controller command
+            sent to Floor 2.
+        </li>
+
+        <li>
+            <code>0x100 / 0x07 / TX</code> – Supervisory Controller command
+            sent to Floor 3.
+        </li>
+
+        <li>
+            <code>0x101 / 0x04 / RX</code> – Elevator Controller reported that
+            the elevator was moving.
+        </li>
+
+        <li>
+            <code>0x101 / 0x05 / RX</code> – Elevator arrived at Floor 1.
+        </li>
+
+        <li>
+            <code>0x101 / 0x06 / RX</code> – Elevator arrived at Floor 2.
+        </li>
+
+        <li>
+            <code>0x101 / 0x07 / RX</code> – Elevator arrived at Floor 3.
+        </li>
+    </ul>
+
+    
+
+    <h3>Request Queue Testing</h3>
+
+    <p>
+        I also tested multiple floor requests. When several requests were
+        generated, the Raspberry Pi stored them in a queue and processed them
+        one at a time. The next command was transmitted only after the previous
+        elevator request was completed.
+    </p>
+
+    <p>
+        This prevented multiple movement commands from being transmitted at the
+        same time and allowed the elevator to process requests sequentially.
+    </p>
+
+    <figure>
+        <img
+            src="../images/queuing.png"
+            alt="Multiple elevator floor requests stored in queue"
+            style="max-width: 100%; height: auto;"
+        >
+
+        <figcaption>
+            Figure 4: Multiple floor requests were added to the request queue
+            and processed sequentially.
+        </figcaption>
+    </figure>
+
+    <h3>Physical CAN Button Testing</h3>
+
+    <p>
+        The system was also tested using the physical CAN floor buttons.
+        Messages generated by the physical controllers were received by the
+        Raspberry Pi, added to the request queue, and recorded in the
+        <code>CAN_logs</code> table.
+    </p>
+
+    <p>
+        This test confirmed that the logging system works for both GUI-generated
+        requests and physical CAN network requests.
+    </p>
+
+    <figure>
+        <img
+            src="../images/push button.png"
+            alt="CAN controller messages generated from physical buttons"
+            style="max-width: 100%; height: auto;"
+        >
+
+        <figcaption>
+            Figure 5: CAN messages generated from the physical floor controllers
+            and recorded in the database.
+        </figcaption>
+    </figure>
+
+    <h3>Phase 3 Results</h3>
+
+    <p>
+        The CAN/LAN communication bridge was successfully demonstrated. A
+        request generated from the website changed the database value, the
+        Raspberry Pi detected the request, and a CAN message was transmitted to
+        the live elevator system.
+    </p>
+
+    <p>
+        CAN messages generated by the physical elevator system were received by
+        the Raspberry Pi and stored in the database. The database successfully
+        recorded both TX and RX traffic with controller information, floor
+        information, event descriptions, and timestamps.
+    </p>
+
+    <p>
+        The completed testing demonstrated communication between the GUI,
+        database, Raspberry Pi, CAN network, and physical elevator hardware.
+    </p>
+
+    <h3>Phase 3 Requirements Completed</h3>
+
+    <ul>
+        <li>
+            CAN/LAN communication bridge between the website/database and the
+            CAN network.
+        </li>
+
+        <li>
+            Real CAN activity recorded in the database.
+        </li>
+
+        <li>
+            GUI floor requests generating CAN commands.
+        </li>
+
+        <li>
+            CAN messages received from the live elevator and written to the
+            database.
+        </li>
+
+        <li>
+            Multiple requests processed using the request queue.
+        </li>
+
+        <li>
+            Physical CAN button requests received and logged.
+        </li>
+    </ul>
+
+</section>
 
 <footer class="row">    
         <div class="col-12">
